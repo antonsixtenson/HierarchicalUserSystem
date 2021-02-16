@@ -5,11 +5,11 @@ User system with three layers. Institution at top, Admin in middle and Regulars 
 
 <b>Structure:</b>
 
-Institution
-    |
-  Admin
-    |
- Regular
+Institution<br>
+    |<br>
+  Admin<br>
+    |<br>
+ Regular<br>
 
 
 ## How to run:
