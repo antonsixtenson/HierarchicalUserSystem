@@ -45,6 +45,7 @@ Institution<br>
  
  Admin needs to be able to add Regulars. Admin and Regulars needs to have their own "logged-in-scene".<br>
  Test with JUnit.<br>
- Fix all small bugs, issued with TODO within the code.
+ Fix all small bugs.<br>
+ Functionality issued with TODO within the code.
  
  
