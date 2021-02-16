@@ -15,10 +15,10 @@ Institution<br>
 ## How to run:
 Run Main.java to get to login-page.
 
-test.db contains an Institution with following credentials (can be used to login).
-Email: badhuset@sthlm.se
-Password: badhuset
-USERTYPE: INSTITUTION
+test.db contains an Institution with following credentials (can be used to login).<br>
+<b>Email:</b> badhuset@sthlm.se<br>
+<b>Password:</b> badhuset<br>
+<b>USERTYPE:</b> INSTITUTION<br>
 
 To add Users go to register page and register.
 <b>You can currently only login as Institution.</b>
