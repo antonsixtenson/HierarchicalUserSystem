@@ -13,7 +13,6 @@ public class Regular extends User {
         this.sex = sex;
     }
 
-    public Regular(){}
 
     /*
      * Getters and Setters

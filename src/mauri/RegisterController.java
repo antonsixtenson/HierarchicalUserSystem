@@ -109,7 +109,7 @@ public class RegisterController {
             String sha_pwd = Password.genPassword(salt, pwd_field.getText());
             a.addAdmin(newAdmin, salt, sha_pwd);
             try {
-                newAdmin.setUid(a.fetchIdFromAdminByEmail(email_field.getText()));
+                newAdmin.setUid(a.fetchIdByEmail(UserType.ADMIN, email_field.getText()));
                 a.addAdminRegisterRequest(newAdmin);
                 backToLogin();
             } catch (SQLException e) {
@@ -154,7 +154,7 @@ public class RegisterController {
             String sha_pwd = Password.genPassword(salt, pwd_field.getText());
             a.addRegular(newRegular, salt, sha_pwd);
             try {
-                newRegular.setUid(a.fetchIdFromRegularByEmail(email_field.getText()));
+                newRegular.setUid(a.fetchIdByEmail(UserType.REGULAR, email_field.getText()));
                 a.addRegularRegisterRequest(newRegular);
                 backToLogin();
             } catch (SQLException e) {

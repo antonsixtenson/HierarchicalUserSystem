@@ -151,7 +151,8 @@ public class InstitutionController {
         if(CheckInputs.checkMail(email_field.getText())){
             try {
                 if (a.searchForEmail(current_type.toString(), email_field.getText()) &&
-                        (a.searchForRequest(current_type.toString(), a.fetchIdFromRegularByEmail(email_field.getText()))) != -1) {
+                        (a.searchForRequest(current_type.toString(),
+                                a.fetchIdByEmail(UserType.REGULAR, email_field.getText()))) != -1) {
                     emailCheck = true;
                 } else {
                     error_label.setText("Email already registered");
@@ -219,7 +220,8 @@ public class InstitutionController {
         if(CheckInputs.checkMail(email_field.getText())){
             try {
                 if (a.searchForEmail(current_type.toString(), email_field.getText()) &&
-                        (a.searchForRequest(current_type.toString(), a.fetchIdFromAdminByEmail(email_field.getText()))) != -1) {
+                        (a.searchForRequest(current_type.toString(),
+                                a.fetchIdByEmail(UserType.ADMIN, email_field.getText()))) != -1) {
                     emailCheck = true;
                 } else {
                     error_label.setText("Email already registered");

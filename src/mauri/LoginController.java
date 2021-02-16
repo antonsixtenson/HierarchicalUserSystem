@@ -34,30 +34,34 @@ public class LoginController {
 
     public void loginInst() {
         App a = new App();
-        int inst_id = a.fetchIdFromInstByEmail(email_field.getText());
-        if(inst_id != -1){
-            byte [] salt = a.fetchInstSaltById(inst_id);
-            String password = a.fetchInstPwdById(inst_id);
-            if(Password.genPassword(salt, pwd_field.getText()).equals(password)){
-                try {
-                    Institution  inst = a.fetchInstById(inst_id);
-                    inst.setSuperKey(inst_id);
-                    Stage mainWindow = Main.getWindow();
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("institution.fxml"));
-                    mainWindow.setScene(new Scene(loader.load()));
-                    InstitutionController ic = loader.getController();
-                    ic.init(inst);
-                    mainWindow.show();
-                } catch (IOException e){
-                    System.out.println(e.getMessage());
+        try {
+            int inst_id = a.fetchIdByEmail(UserType.INSTITUTION, email_field.getText());
+            if(inst_id != -1){
+                byte [] salt = a.fetchSaltById(UserType.INSTITUTION, inst_id);
+                String password = a.fetchPwdById(UserType.INSTITUTION, inst_id);
+                if(Password.genPassword(salt, pwd_field.getText()).equals(password)){
+                    try {
+                        Institution  inst = a.fetchInstById(inst_id);
+                        inst.setSuperKey(inst_id);
+                        Stage mainWindow = Main.getWindow();
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("institution.fxml"));
+                        mainWindow.setScene(new Scene(loader.load()));
+                        InstitutionController ic = loader.getController();
+                        ic.init(inst);
+                        mainWindow.show();
+                    } catch (IOException e){
+                        System.out.println(e.getMessage());
+                    }
+                } else {
+                    error_label.setText("Incorrect Password");
                 }
             } else {
-                error_label.setText("Incorrect Password");
+                error_label.setText("Email not registered");
             }
-        } else {
-            error_label.setText("Email not registered");
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+            error_label.setText("An error occurred, please contact system administrator");
         }
-
     }
 
     /**
@@ -99,7 +103,7 @@ public class LoginController {
         App a = new App();
         if(utype_dropdown.getValue().equals(UserType.ADMIN)){
             try {
-                int uid = a.fetchIdFromAdminByEmail(email_field.getText());
+                int uid = a.fetchIdByEmail(UserType.ADMIN, email_field.getText());
                 if(a.searchForRequest(UserType.ADMIN.toString(), uid) != -1){
                     error_label.setText("Your registration request have not yet been handled");
                 } else {
@@ -111,7 +115,7 @@ public class LoginController {
             }
         } else if(utype_dropdown.getValue().equals(UserType.REGULAR)){
             try {
-                int uid = a.fetchIdFromAdminByEmail(email_field.getText());
+                int uid = a.fetchIdByEmail(UserType.REGULAR, email_field.getText());
                 if(a.searchForRequest(UserType.REGULAR.toString(), uid) == -1){
                     error_label.setText("Your registration request have not yet been handled");
                 } else {

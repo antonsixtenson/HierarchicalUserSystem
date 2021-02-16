@@ -228,12 +228,13 @@ public class App {
     }
 
     /**
-     * Removes all Regulars
-     * TODO The three following dropAll can be merged
+     * Removes all from table depending on Which usertype
+     *
      */
 
-    public void dropAllRegulars(){
-        String sql = "DELETE FROM regulars";
+    public void dropAllInTable(UserType type){
+        String table = type.toString().toLowerCase(Locale.ROOT)+"s";
+        String sql = "DELETE FROM "+table;
 
         try(Connection conn = this.connect();
             PreparedStatement ps = connect().prepareStatement(sql)){
@@ -244,92 +245,21 @@ public class App {
     }
 
     /**
-     * Removes all admins
+     * Fetch User(Admin or Regular) or Institution ID by Searching for Email
+     * in corresponding Table
+     * @param type UserType
+     * @param email EmailAdress
+     * @return Id if found, else -1
      */
 
-    public void dropAllAdmins(){
-        String sql = "DELETE FROM admins";
-
-        try(Connection conn = this.connect();
-            PreparedStatement ps = connect().prepareStatement(sql)){
-            ps.executeUpdate();
-        } catch (SQLException e){
-            System.out.println(e.getMessage());
-        }
-    }
-
-    /**
-     * Removes all institutions
-     */
-
-    public void dropAllInstitutions(){
-        String sql = "DELETE FROM institutions";
-
-        try(Connection conn = this.connect();
-                PreparedStatement ps = connect().prepareStatement(sql)){
-            ps.executeUpdate();
-        } catch (SQLException e){
-            System.out.println(e.getMessage());
-        }
-    }
-
-    /**
-     *
-     * @param email Regular email
-     * @return Regular ID
-     * TODO The three following fetchEmail can be merged
-     */
-
-    public int fetchIdFromRegularByEmail(String email) throws SQLException{
+    public int fetchIdByEmail(UserType type, String email) throws SQLException{
+        String table = type.toString().toLowerCase(Locale.ROOT)+"s";
         try {
             Connection conn = this.connect();
             Statement sta = conn.createStatement();
-            String sql = "SELECT id FROM regulars WHERE email='" + email + "'";
+            String sql = "SELECT id FROM " + table + " WHERE email='" + email + "'";
             ResultSet rs = sta.executeQuery(sql);
             int val = rs.getInt("id");
-            conn.close();
-            return val;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return -1;
-    }
-
-    /**
-     *
-     * @param email Admin Email
-     * @return Admin ID
-     *
-     */
-
-    public int fetchIdFromAdminByEmail(String email) throws SQLException {
-        try {
-            Connection conn = this.connect();
-            Statement sta = conn.createStatement();
-            String sql = "SELECT id FROM admins WHERE email='" + email + "'";
-            ResultSet rs = sta.executeQuery(sql);
-            int val = rs.getInt("id");
-            conn.close();
-            return val;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return -1;
-    }
-
-    /**
-     *
-     * @param email Institutions Email
-     * @return Institution ID
-     */
-
-    public int fetchIdFromInstByEmail(String email) {
-        try {
-            Connection conn = this.connect();
-            Statement sta = conn.createStatement();
-            String sql = "SELECT id FROM institutions WHERE email='" + email + "'";
-            ResultSet rs = sta.executeQuery(sql);
-            int val = rs.getInt(1);
             conn.close();
             return val;
         } catch (SQLException e) {
@@ -532,15 +462,20 @@ public class App {
         return value;
     }
 
+    /**
+     *
+     * @param type UserType
+     * @param uid User ID
+     * @return String containing SHA256 encrypted password
+     */
 
-    // TODO All following (fetchSalt, fetchPWD) can be merged.
-
-    public String fetchAdminPwdById(int uid) {
+    public String fetchPwdById(UserType type, int uid) {
+        String table = type.toString().toLowerCase(Locale.ROOT)+"s";
         String pwd = "";
         try {
             Connection conn = this.connect();
             Statement sta = conn.createStatement();
-            String sql = "SELECT password FROM admins WHERE id="+uid;
+            String sql = "SELECT password FROM " + table + " WHERE id="+uid;
             ResultSet rs = sta.executeQuery(sql);
             pwd = rs.getString("password");
             conn.close();
@@ -551,77 +486,20 @@ public class App {
         return null;
     }
 
-    public byte [] fetchAdminSaltById(int uid) {
-        byte [] salt = new byte[16];
+    /**
+     *
+     * @param type UserType
+     * @param uid User ID
+     * @return byte array containing salt used to SHA256 encrypt password
+     */
+
+    public byte [] fetchSaltById(UserType type, int uid) {
+        String table = type.toString().toLowerCase(Locale.ROOT)+"s";
+        byte [] salt;
         try {
             Connection conn = this.connect();
             Statement sta = conn.createStatement();
-            String sql = "SELECT salt FROM admins WHERE id="+uid;
-            ResultSet rs = sta.executeQuery(sql);
-            salt = rs.getBytes("salt");
-            conn.close();
-            return salt;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
-
-    public String fetchInstPwdById(int uid) {
-        String pwd = "";
-        try {
-            Connection conn = this.connect();
-            Statement sta = conn.createStatement();
-            String sql = "SELECT password FROM institutions WHERE id="+uid;
-            ResultSet rs = sta.executeQuery(sql);
-            pwd = rs.getString("password");
-            conn.close();
-            return pwd;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
-
-    public byte [] fetchInstSaltById(int uid) {
-        byte [] salt = new byte[16];
-        try {
-            Connection conn = this.connect();
-            Statement sta = conn.createStatement();
-            String sql = "SELECT salt FROM institutions WHERE id="+uid;
-            ResultSet rs = sta.executeQuery(sql);
-            salt = rs.getBytes("salt");
-            conn.close();
-            return salt;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
-
-    public String fetchRegularPwdById(int uid) {
-        String pwd = "";
-        try {
-            Connection conn = this.connect();
-            Statement sta = conn.createStatement();
-            String sql = "SELECT password FROM regulars WHERE id="+uid;
-            ResultSet rs = sta.executeQuery(sql);
-            pwd = rs.getString("password");
-            conn.close();
-            return pwd;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
-
-
-    public byte [] fetchRegularSaltById(int uid) {
-        byte [] salt = new byte[16];
-        try {
-            Connection conn = this.connect();
-            Statement sta = conn.createStatement();
-            String sql = "SELECT salt FROM regulars WHERE id="+uid;
+            String sql = "SELECT salt FROM " + table + " WHERE id="+uid;
             ResultSet rs = sta.executeQuery(sql);
             salt = rs.getBytes("salt");
             conn.close();
