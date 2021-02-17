@@ -1,8 +1,13 @@
 package mauri;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -166,7 +171,6 @@ public class InstitutionController {
             error_label.setText("Email not accepted");
         }
         if(checkInputs() && emailCheck && ageCheck && sexCheck){
-            System.out.println(curr_regular.getUid());
             curr_regular.setName(name_field.getText());
             curr_regular.setLastName(lastname_field.getText());
             curr_regular.setEmail(email_field.getText());
@@ -189,25 +193,6 @@ public class InstitutionController {
         }
     }
 
-
-    /**
-     * Fills groups_dropdown with admin that have been accepted. (There is no
-     * pending registration request with that admins ID)
-     * TODO Update when Admin is accepted
-     */
-
-    public void fillGroupsDropdown(){
-        if(!groupsGen) {
-            ArrayList<Admin> al = institution.getAdmins();
-            App a = new App();
-            for (Admin admin : al) {
-                if(a.searchForRequest(UserType.ADMIN.toString(), admin.getUid()) == -1) {
-                    groups_dropdown.getItems().add(admin.getName() + ", Key: " + admin.getUid());
-                }
-            }
-            groupsGen = true;
-        }
-    }
 
     /**
      * Updates Admin information
@@ -243,7 +228,31 @@ public class InstitutionController {
             admin_requests_list.getItems().remove(admin_index);
             adminReqs.remove(admin_index);
             institution.addAdmin(curr_admin);
+            boolean added = false;
+            if(!added) {
+                groups_dropdown.getItems().add(curr_admin.getName() + ", Key: " + curr_admin.getUid());
+                added = true;
+            }
             getSelectedAdmin();
+        }
+    }
+
+    /**
+     * Fills groups_dropdown with admin that have been accepted. (There is no
+     * pending registration request with that admins ID)
+     *
+     */
+
+    public void fillGroupsDropdown(){
+        if(!groupsGen) {
+            ArrayList<Admin> al = institution.getAdmins();
+            App a = new App();
+            for (Admin admin : al) {
+                if(a.searchForRequest(UserType.ADMIN.toString(), admin.getUid()) == -1) {
+                    groups_dropdown.getItems().add(admin.getName() + ", Key: " + admin.getUid());
+                }
+            }
+            groupsGen = true;
         }
     }
 
@@ -274,36 +283,6 @@ public class InstitutionController {
             error_label.setText("Lastname is blank");
         }
         return nameCheck && lastnameCheck;
-    }
-
-    /**
-     * Disables all fields, combobox and spinner
-     */
-
-    public void disableAll(){
-        name_field.setDisable(true);
-        lastname_field.setDisable(true);
-        email_field.setDisable(true);
-        sex_field.setDisable(true);
-        age_spinner.setDisable(true);
-        groups_dropdown.setDisable(true);
-        accept_btn.setDisable(true);
-        deny_btn.setDisable(true);
-    }
-
-    /**
-     * Enables all fields, combobox and spinner
-     */
-
-    public void enableAll(){
-        name_field.setDisable(false);
-        lastname_field.setDisable(false);
-        email_field.setDisable(false);
-        sex_field.setDisable(false);
-        age_spinner.setDisable(false);
-        groups_dropdown.setDisable(false);
-        accept_btn.setDisable(false);
-        deny_btn.setDisable(false);
     }
 
 
@@ -337,21 +316,70 @@ public class InstitutionController {
     }
 
     /**
-     * Logs out Institution
-     * TODO
+     * Disables all fields, combobox and spinner
      */
 
-    public void logout(){
-        System.out.println("Logging out");
+    public void disableAll(){
+        name_field.setDisable(true);
+        lastname_field.setDisable(true);
+        email_field.setDisable(true);
+        sex_field.setDisable(true);
+        age_spinner.setDisable(true);
+        groups_dropdown.setDisable(true);
+        accept_btn.setDisable(true);
+        deny_btn.setDisable(true);
+    }
+
+    /**
+     * Enables all fields, combobox and spinner
+     */
+
+    public void enableAll(){
+        name_field.setDisable(false);
+        lastname_field.setDisable(false);
+        email_field.setDisable(false);
+        sex_field.setDisable(false);
+        age_spinner.setDisable(false);
+        groups_dropdown.setDisable(false);
+        accept_btn.setDisable(false);
+        deny_btn.setDisable(false);
+    }
+
+    /**
+     * Logs out Institution
+     *
+     */
+
+    public void logout() throws IOException {
+        Stage mainWindow = Main.getWindow();
+        Parent register = FXMLLoader.load(getClass().getResource("login.fxml"));
+        mainWindow.setScene(new Scene(register, 900, 700));
+        mainWindow.show();
     }
 
     /**
      * Denies registration request.
-     * TODO
+     *
      */
 
     public void denyRequest(){
-        System.out.println("DENIED");
+        App a = new App();
+        int uid = (current_type.equals(UserType.ADMIN)) ? curr_admin.getUid() : curr_regular.getUid();
+        a.dropRequest(current_type.toString(), uid);
+        a.dropUser(current_type.toString(), uid);
+        if(current_type.equals(UserType.ADMIN)){
+            admin_requests_list.getItems().remove(admin_index);
+            adminReqs.remove(admin_index);
+            getSelectedAdmin();
+        } else {
+            regular_requests_list.getItems().remove(regular_index);
+            regularReqs.remove(regular_index);
+            getSelectedRegular();
+        }
     }
+
+
+    // TODO Update temp fix to update treeview (wants it to update automatically)
+    // TODO Bug, deny/accept treeview gets two of the same...?
 
 }

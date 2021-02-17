@@ -769,7 +769,7 @@ public class App {
 
 
     public static void main(String[] args) throws SQLException {
-       /*
+        /*
         // Use to create new database and its tables:
 
         App a = new App();
