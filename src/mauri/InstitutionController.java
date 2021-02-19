@@ -227,11 +227,9 @@ public class InstitutionController {
             a.dropRequest(current_type.toString(), curr_admin.getUid());
             admin_requests_list.getItems().remove(admin_index);
             adminReqs.remove(admin_index);
-            institution.addAdmin(curr_admin);
-            boolean added = false;
-            if(!added) {
+            if(groupsGen) {
+                institution.addAdmin(curr_admin);
                 groups_dropdown.getItems().add(curr_admin.getName() + ", Key: " + curr_admin.getUid());
-                added = true;
             }
             getSelectedAdmin();
         }
@@ -294,10 +292,10 @@ public class InstitutionController {
 
 
     public void fillTreeView(){
-        ArrayList<Admin> admins = institution.getAdmins();
-        ArrayList<Regular> regulars = institution.getRegUsers();
-        TreeItem<String> root = new TreeItem<>(institution.getName());
         App a = new App();
+        ArrayList<Admin> admins = a.fetchAllAdminsBySuper(institution.getSuperKey());
+        ArrayList<Regular> regulars = a.fetchAllRegularsBySuper(institution.getSuperKey());
+        TreeItem<String> root = new TreeItem<>(institution.getName());
         for(Admin admin : admins){
             if(a.searchForRequest(UserType.ADMIN.toString(), admin.getUid()) == -1){
                 TreeItem<String> adminTemp = new TreeItem<>(admin.getLastName() + ", " +
@@ -380,6 +378,4 @@ public class InstitutionController {
 
 
     // TODO Update temp fix to update treeview (wants it to update automatically)
-    // TODO Bug, deny/accept treeview gets two of the same...?
-
 }

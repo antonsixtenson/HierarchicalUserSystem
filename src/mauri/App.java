@@ -778,8 +778,8 @@ public class App {
         a.createRegularsTable();
         a.createAdminRegisterRequestTable();
         a.createRegularRegisterRequestTable();
-
         */
+
 
     }
 }
