@@ -1,5 +1,5 @@
 # HierarchicalUserSystem
-User system with three layers. Institution at top, Admin in middle and Regulars at bottom. UNDER DEVELOPMENT.
+User system with three layers. Institution at top, Admin in middle and Regulars at bottom. 
 
 ## Hierarchical User System
 
