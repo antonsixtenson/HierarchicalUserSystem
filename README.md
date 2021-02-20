@@ -21,7 +21,7 @@ test.db contains an Institution with following credentials (can be used to login
 <b>USERTYPE:</b> INSTITUTION<br>
 
 To add Users go to register page and register.
-<b>You can currently only login as Institution.</b>
+<b>You can currently login as Institution and Admin</b>
 
 
 
@@ -41,11 +41,5 @@ Institution<br>
  In this way the top layer (Institution) can stop misuse and faulty registrations.
  <br>
  
- ## TODO
- 
- Admin needs to be able to add Regulars. Admin and Regulars needs to have their own "logged-in-scene".<br>
- Test with JUnit.<br>
- Fix all small bugs.<br>
- Functionality issued with TODO within the code.
  
  
