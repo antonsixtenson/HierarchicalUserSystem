@@ -21,7 +21,6 @@ test.db contains an Institution with following credentials (can be used to login
 <b>USERTYPE:</b> INSTITUTION<br>
 
 To add Users go to register page and register.
-<b>You can currently login as Institution and Admin</b>
 
 
 
