@@ -29,7 +29,6 @@ public class AdminController {
     private Admin admin;
     private ArrayList<Regular> regReqs;
     private Regular selected;
-    private String temp_email;
 
     public void init(Admin adm){
         App a = new App();

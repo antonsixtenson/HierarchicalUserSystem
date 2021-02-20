@@ -96,6 +96,37 @@ public class LoginController {
         }
     }
 
+    public void loginRegular(){
+        App a = new App();
+        try {
+            int regular_id = a.fetchIdByEmail(UserType.REGULAR, email_field.getText());
+            if(regular_id != -1){
+                byte [] salt = a.fetchSaltById(UserType.REGULAR, regular_id);
+                String password = a.fetchPwdById(UserType.REGULAR, regular_id);
+                if(Password.genPassword(salt, pwd_field.getText()).equals(password)){
+                    try {
+                        Regular regular = a.fetchRegularById(regular_id);
+                        Stage mainWindow = Main.getWindow();
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("regular.fxml"));
+                        mainWindow.setScene(new Scene(loader.load()));
+                        RegularController rc = loader.getController();
+                        rc.init(regular);
+                        mainWindow.show();
+                    } catch (IOException e){
+                        System.out.println(e.getMessage());
+                    }
+                } else {
+                    error_label.setText("Incorrect Password");
+                }
+            } else {
+                error_label.setText("Email not registered");
+            }
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+            error_label.setText("An error occurred, please contact system administrator");
+        }
+    }
+
     /**
      * Handles login request depending on UserType.
      *
@@ -113,7 +144,7 @@ public class LoginController {
                     loginAdmin();
                 } else if (utype_dropdown.getValue().equals(UserType.REGULAR) && checkRegisterStatus()) {
                     error_label.setText("");
-                    System.out.println("Regular Success");
+                    loginRegular();
                 }
             } else {
                 error_label.setText("Email is not registered");
@@ -148,7 +179,7 @@ public class LoginController {
         } else if(utype_dropdown.getValue().equals(UserType.REGULAR)){
             try {
                 int uid = a.fetchIdByEmail(UserType.REGULAR, email_field.getText());
-                if(a.searchForRequest(UserType.REGULAR.toString(), uid) == -1){
+                if(a.searchForRequest(UserType.REGULAR.toString(), uid) != -1){
                     error_label.setText("Your registration request have not yet been handled");
                 } else {
                     clear = true;
