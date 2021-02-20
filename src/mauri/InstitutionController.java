@@ -16,9 +16,7 @@ public class InstitutionController {
     @FXML
     Label network_label, type_label, error_label;
     @FXML
-    ListView<String> admin_requests_list;
-    @FXML
-    ListView<String> regular_requests_list;
+    ListView<String> admin_requests_list, regular_requests_list;
     @FXML
     TextField name_field, lastname_field, email_field, sex_field;
     @FXML

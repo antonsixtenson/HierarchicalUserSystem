@@ -64,9 +64,41 @@ public class LoginController {
         }
     }
 
+
+    public void loginAdmin(){
+        App a = new App();
+        try {
+            int admin_id = a.fetchIdByEmail(UserType.ADMIN, email_field.getText());
+            if(admin_id != -1){
+                byte [] salt = a.fetchSaltById(UserType.ADMIN, admin_id);
+                String password = a.fetchPwdById(UserType.ADMIN, admin_id);
+                if(Password.genPassword(salt, pwd_field.getText()).equals(password)){
+                    try {
+                        Admin admin = a.fetchAdminById(admin_id);
+                        Stage mainWindow = Main.getWindow();
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("admin.fxml"));
+                        mainWindow.setScene(new Scene(loader.load()));
+                        AdminController ac = loader.getController();
+                        ac.init(admin);
+                        mainWindow.show();
+                    } catch (IOException e){
+                        System.out.println(e.getMessage());
+                    }
+                } else {
+                    error_label.setText("Incorrect Password");
+                }
+            } else {
+                error_label.setText("Email not registered");
+            }
+        } catch (SQLException e){
+            System.out.println(e.getMessage());
+            error_label.setText("An error occurred, please contact system administrator");
+        }
+    }
+
     /**
      * Handles login request depending on UserType.
-     * TODO Admin and Regular login. Need to create new Scenes.
+     *
      */
 
     public void handleLoginRequest(){
@@ -78,7 +110,7 @@ public class LoginController {
                     loginInst();
                 } else if (utype_dropdown.getValue().equals(UserType.ADMIN) && checkRegisterStatus()) {
                     error_label.setText("");
-                    System.out.println("Admin Success");
+                    loginAdmin();
                 } else if (utype_dropdown.getValue().equals(UserType.REGULAR) && checkRegisterStatus()) {
                     error_label.setText("");
                     System.out.println("Regular Success");
